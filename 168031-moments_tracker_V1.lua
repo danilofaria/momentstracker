@@ -19,6 +19,7 @@
  -- path to the file where checkpoints and moments are saved
  destination = nil
  media_name = nil
+ media_duration = nil
 -----------------------------------------------
  
 
@@ -34,6 +35,7 @@
  function get_media_meta()
   input = vlc.object.input()
   media_name = vlc.input.item():name()
+  media_duration = vlc.input.item():duration()
  end
 
  function display_error_box()
@@ -190,11 +192,25 @@ return string.format("%02d:%02d:%02d",hours,minutes,seconds)
  if(moments[media_name]~=nill) then
   moments_list = main_layout:add_list(1,4,4,1) -- empty moments_list widget to prevent duplicate entries
   for i,j in pairs(moments[media_name]) do
-    moments_list:add_value(i,counter)
+    moments_list:add_value(i .. " " .. SecondsToClock(j * media_duration),counter)
     counter = counter + 1
   end
  end
  end
+
+-- https://gist.github.com/jesseadams/791673
+ function SecondsToClock(seconds)
+  local seconds = tonumber(seconds)
+
+  if seconds <= 0 then
+    return "00:00:00";
+  else
+    hours = string.format("%02.f", math.floor(seconds/3600));
+    mins = string.format("%02.f", math.floor(seconds/60 - (hours*60)));
+    secs = string.format("%02.f", math.floor(seconds - hours*3600 - mins *60));
+    return hours..":"..mins..":"..secs
+  end
+end
 
  
  function jump_to_moment()
