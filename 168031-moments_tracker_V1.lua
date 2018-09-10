@@ -48,9 +48,9 @@
   if pcall(get_media_meta) then
    get_media_meta() 
    -- destination = vlc.config.userdatadir().."/moments_tracker.txt"
-   item_uri = vlc.input.item():uri()
-   destination = item_uri:sub(8,item_uri:len()) .. ".bookmarks" -- got substring in order to get rid of "file://"
-   
+   -- item_uri = vlc.input.item():uri()
+   -- destination = item_uri:sub(8,item_uri:len()) .. ".bookmarks" -- got substring in order to get rid of "file://"
+   destination = load_destination()
    load_checkpoints_moments() 
    createGUI()
    display_moments()
@@ -81,6 +81,20 @@ if checkpoints_meta[media_name][1]~=nil then
  end
 end
 
+
+function load_destination()
+ dest_file = vlc.config.userdatadir().."/destination.txt"
+ file = io.open(dest_file,"r")
+ if (file) then
+  d = file:read ("*l")
+  file:close()
+  if (d) then 
+   return d
+  end
+ end 
+ return vlc.config.userdatadir().."/moments_tracker.txt"
+end
+ 
  function save_checkpoints_moments(s)
  file= io.open(destination,"w")
  for i,j in pairs(s) do
