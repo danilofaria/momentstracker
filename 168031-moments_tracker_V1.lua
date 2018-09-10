@@ -47,7 +47,10 @@
   vlc.msg.dbg(vlc.config.userdatadir())
   if pcall(get_media_meta) then
    get_media_meta() 
-   destination = vlc.config.userdatadir().."/moments_tracker.txt"
+   -- destination = vlc.config.userdatadir().."/moments_tracker.txt"
+   item_uri = vlc.input.item():uri()
+   destination = item_uri:sub(8,item_uri:len()) .. ".bookmarks" -- got substring in order to get rid of "file://"
+   
    load_checkpoints_moments() 
    createGUI()
    display_moments()
@@ -63,7 +66,7 @@
    remove_moment_b = main_layout:add_button(" Remove Moment ",remove_moment,3,5,1,1)
    go_to_moment_b = main_layout:add_button(" Jump to Moment ",jump_to_moment,2,5,1,1)
    main_layout:add_label("<hr>",1,6,5,1)
-   main_layout:add_label("<b>Track Checkpoints :</b>")
+   main_layout:add_label("<b>Track Checkpoints :</b>",1,6,5,1)
    checkpoint_l = main_layout:add_label("",2,7)
    display_checkpoint_data() 
    mark_position_b = main_layout:add_button(" Checkpoint! ", mark_position, 1,8,1,1)
