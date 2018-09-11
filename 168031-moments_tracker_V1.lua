@@ -71,6 +71,9 @@
    display_checkpoint_data() 
    mark_position_b = main_layout:add_button(" Checkpoint! ", mark_position, 1,8,1,1)
    go_to_checkpoint_b = main_layout:add_button(" Retrieve Checkpoint ", jump_to_checkpoint, 2,8,1,1)
+
+   -- main_layout:add_label("debug: destination " .. destination, 1,10,1,1)
+   -- main_layout:add_label("debug: destination2 " .. destination2, 1,11,1,1)
  end
 
 function display_checkpoint_data()
@@ -203,17 +206,34 @@ return string.format("%02d:%02d:%02d",hours,minutes,seconds)
   end
  end
  
- 
  function display_moments()
- local counter = 1
  if(moments[media_name]~=nill) then
+  local inverted_table = table_invert(moments[media_name])
+  local keys = sorted_keys(inverted_table)
   moments_list = main_layout:add_list(1,4,4,1) -- empty moments_list widget to prevent duplicate entries
-  for i,j in pairs(moments[media_name]) do
-    moments_list:add_value(i .. " " .. SecondsToClock(j * media_duration),counter)
-    counter = counter + 1
+  for i,j in pairs(keys) do
+    moments_list:add_value(inverted_table[j],i)
+     -- .. " " .. SecondsToClock(j * media_duration)
   end
  end
  end
+
+function table_invert(t)
+   local s={}
+   for k,v in pairs(t) do
+     s[v]=k
+   end
+   return s
+end
+
+function sorted_keys(t)
+  local keyset={}
+  for k,v in pairs(t) do
+    table.insert(keyset, k)
+  end
+  table.sort(keyset)
+  return keyset
+end
 
 -- https://gist.github.com/jesseadams/791673
  function SecondsToClock(seconds)
