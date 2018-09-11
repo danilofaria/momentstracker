@@ -206,14 +206,25 @@ return string.format("%02d:%02d:%02d",hours,minutes,seconds)
   end
  end
  
+ -- need to investigate why doesnt work
+ -- function display_moments()
+ -- if(moments[media_name]~=nill) then
+ --  local inverted_table = table_invert(moments[media_name])
+ --  local keys = sorted_keys(inverted_table)
+ --  moments_list = main_layout:add_list(1,4,4,1) -- empty moments_list widget to prevent duplicate entries
+ --  for i,j in pairs(keys) do
+ --    moments_list:add_value(SecondsToClock(j * media_duration) .. " - " .. inverted_table[j],i)
+ --  end
+ -- end
+ -- end
+
  function display_moments()
+ local counter = 1
  if(moments[media_name]~=nill) then
-  local inverted_table = table_invert(moments[media_name])
-  local keys = sorted_keys(inverted_table)
   moments_list = main_layout:add_list(1,4,4,1) -- empty moments_list widget to prevent duplicate entries
-  for i,j in pairs(keys) do
-    moments_list:add_value(inverted_table[j],i)
-     -- .. " " .. SecondsToClock(j * media_duration)
+  for i,j in pairs(moments[media_name]) do
+    moments_list:add_value(SecondsToClock(j * media_duration) .. " - " .. i, counter)
+    counter = counter + 1
   end
  end
  end
@@ -255,7 +266,7 @@ end
      if (not selection) then return 1 end
      local sel = nil
      for idx, selectedItem in pairs(selection) do
-         sel = selectedItem
+         sel = selectedItem:sub(12,selectedItem:len()) -- substring makes up for added clock time
          break
      end
     vlc.var.set(input,"position",moments[media_name][sel])
@@ -266,7 +277,7 @@ end
      if (not selection) then return 1 end
      local sel = nil
      for idx, selectedItem in pairs(selection) do
-         sel = selectedItem
+         sel = selectedItem:sub(12,selectedItem:len()) -- substring makes up for added clock time
          break
      end
      moments[media_name][sel] = nil
