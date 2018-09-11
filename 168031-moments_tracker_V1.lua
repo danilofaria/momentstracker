@@ -206,33 +206,21 @@ return string.format("%02d:%02d:%02d",hours,minutes,seconds)
   end
  end
  
- -- need to investigate why doesnt work
- -- function display_moments()
- -- if(moments[media_name]~=nill) then
- --  local inverted_table = table_invert(moments[media_name])
- --  local keys = sorted_keys(inverted_table)
- --  moments_list = main_layout:add_list(1,4,4,1) -- empty moments_list widget to prevent duplicate entries
- --  for i,j in pairs(keys) do
- --    moments_list:add_value(SecondsToClock(j * media_duration) .. " - " .. inverted_table[j],i)
- --  end
- -- end
- -- end
-
  function display_moments()
- local counter = 1
- if(moments[media_name]~=nill) then
+ if(moments[media_name]~=nil) then
+  local clock_to_name_table = clock_to_name(moments[media_name])
+  local clock_times = sorted_keys(clock_to_name_table)
   moments_list = main_layout:add_list(1,4,4,1) -- empty moments_list widget to prevent duplicate entries
-  for i,j in pairs(moments[media_name]) do
-    moments_list:add_value(SecondsToClock(j * media_duration) .. " - " .. i, counter)
-    counter = counter + 1
+  for i, clock_time in pairs(clock_times) do
+    moments_list:add_value(clock_time .. " - " .. clock_to_name_table[clock_time], i)
   end
  end
  end
 
-function table_invert(t)
+function clock_to_name(t)
    local s={}
    for k,v in pairs(t) do
-     s[v]=k
+     s[SecondsToClock(v * media_duration)]=k
    end
    return s
 end
