@@ -3,4 +3,5 @@ This includes the following changes:
  - Show the clock time of each moment beside the title 
  - Show moments in order of time
  - Ability to overwrite destination file path by creating destination.txt (on mac this is at ~/Library/Application Support/org.videolan.vlc/destination.txt)
+ - Ability to rename moments
  - Small GUI fix

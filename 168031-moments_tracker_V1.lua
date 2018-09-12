@@ -65,6 +65,8 @@
    capture_moment_b = main_layout:add_button(" Capture Moment ",capture_moment,1, 5, 1, 1)
    remove_moment_b = main_layout:add_button(" Remove Moment ",remove_moment,3,5,1,1)
    go_to_moment_b = main_layout:add_button(" Jump to Moment ",jump_to_moment,2,5,1,1)
+   rename_moment_b = main_layout:add_button(" Rename Moment ",rename_moment,4,5,1,1)
+
    main_layout:add_label("<hr>",1,6,5,1)
    main_layout:add_label("<b>Track Checkpoints :</b>",1,6,5,1)
    checkpoint_l = main_layout:add_label("",2,7)
@@ -183,6 +185,18 @@ return string.format("%02d:%02d:%02d",hours,minutes,seconds)
     confirm_caption_b = main_layout:add_button(" Confirm ", confirm_caption, 4,2,1,1)
  end
  
+  function rename_moment()
+   selection = get_selection()
+   if (selection) then 
+    moment_begins = moments[media_name][selection]
+    moments[media_name][selection] = nil
+    if vlc.playlist.status() ~= "paused" then
+     vlc.playlist.pause()
+    end
+    caption_text_input = main_layout:add_text_input(selection,1,2,3,1)
+    confirm_caption_b = main_layout:add_button(" Confirm ", confirm_caption, 4,2,1,1)
+   end
+ end
  
   function confirm_caption()
   if moments[media_name] == nil then 
@@ -192,7 +206,6 @@ return string.format("%02d:%02d:%02d",hours,minutes,seconds)
   local caption_text = caption_text_input:get_text()
   main_layout:del_widget(caption_text_input)
   main_layout:del_widget(confirm_caption_b)
-  capture_moment_b = main_layout:add_button(" Capture Moment ",capture_moment,1, 5, 1, 1)
   moments[media_name][caption_text] = moment_begins
   if checkpoints[media_name] == nil then
     checkpoints[media_name] = moment_begins
@@ -250,31 +263,28 @@ end
 
  
  function jump_to_moment()
-  selection = moments_list:get_selection()
-     if (not selection) then return 1 end
-     local sel = nil
-     for idx, selectedItem in pairs(selection) do
-         sel = selectedItem:sub(12,selectedItem:len()) -- substring makes up for added clock time
-         break
-     end
-    vlc.var.set(input,"position",moments[media_name][sel])
+  selection = get_selection()
+  if (selection) then 
+    vlc.var.set(input,"position",moments[media_name][selection])
+  end
  end
  
   function remove_moment()
-   selection = moments_list:get_selection()
-     if (not selection) then return 1 end
-     local sel = nil
-     for idx, selectedItem in pairs(selection) do
-         sel = selectedItem:sub(12,selectedItem:len()) -- substring makes up for added clock time
-         break
-     end
-     moments[media_name][sel] = nil
-     save_checkpoints_moments(checkpoints)
-     display_moments()
-
+   selection = get_selection()
+   if (selection) then 
+    moments[media_name][selection] = nil
+    save_checkpoints_moments(checkpoints)
+    display_moments()
+   end
   end
  
- 
+  function get_selection()
+    local selection = moments_list:get_selection()
+    if (not selection) then return nil end
+    for idx, selectedItem in pairs(selection) do
+     return selectedItem:sub(12,selectedItem:len()) -- substring makes up for added clock time
+    end
+  end
 
  
  
