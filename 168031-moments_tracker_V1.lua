@@ -94,7 +94,7 @@ function load_destination()
   d = file:read ("*l")
   file:close()
   if (d) then 
-   return d
+   return d..media_name..".txt"
   end
  end 
  return vlc.config.userdatadir().."/moments_tracker.txt"
